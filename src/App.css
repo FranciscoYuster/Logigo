@@ -1,0 +1,41 @@
+/* Estilos globales para evitar overflow y mejorar responsividad */
+html, body {
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.public-content-wrapper {
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: calc(100vh - 80px);
+  box-sizing: border-box;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.container, .container-fluid {
+  width: 100%;
+  max-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+
+.view-container {
+  max-width: 100px;
+  width: 100%;
+  margin: 80px auto 0 auto;
+  padding: 24px;
+  min-height: calc(100vh - 80px);
+  box-sizing: border-box;
+  overflow-y: auto;
+  background: transparent;
+}
