@@ -37,16 +37,15 @@ import {
 import "./SideNav.css";
 
 const sideNavVariants = {
-  hidden: { x: -205, opacity: 0, y: -25 },
+  hidden: { x: 0, opacity: 0 },
   visible: {
     x: 0,
-    y: 0,
     opacity: 1,
     transition: {
       type: "spring",
       stiffness: 120,
       damping: 25,
-      delay: 0,
+      delay: 0.5,
     },
   },
 };
