@@ -306,7 +306,31 @@ const Proveedores = () => {
     <div className="container mt-4 d-flex flex-column align-items-center" style={{ fontSize: "0.9rem" }}>
       <ToastContainer />
       <div className="w-100" style={{ maxWidth: "1200px" }}>
-        <h1 className="mb-3 text-white">Proveedores</h1>
+        <h1 className="mb-3 text-white">Lista de Proveedores</h1>
+        <div className="mb-3">
+          <div className="row align-items-center">
+            <div className="col d-flex justify-content-between align-items-center">
+              <div>
+                <Button
+                  variant="primary"
+                  onClick={handleOpenCreateModal}
+                  className="rounded-pill me-2"
+                  style={{ backgroundColor: "#074de3", borderColor: "#074de3" }}
+                >
+                  <FaPlus className="me-1" /> Crear Proveedor
+                </Button>
+              </div>
+              <div className="d-flex justify-content-end">
+                <Button variant="success" className="rounded-pill me-2" onClick={exportToCSV}>
+                  Exportar CSV
+                </Button>
+                <Button variant="success" className="rounded-pill" onClick={exportToExcel}>
+                  Exportar Excel
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
         <InputGroup className="mb-3">
           <FormControl
             type="text"
@@ -316,12 +340,6 @@ const Proveedores = () => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <Button variant="success" className="rounded-pill" onClick={exportToCSV}>
-            Exportar CSV
-          </Button>
-          <Button variant="success" className="rounded-pill ms-2" onClick={exportToExcel}>
-            Exportar Excel
-          </Button>
         </InputGroup>
 
         {isLoading ? (

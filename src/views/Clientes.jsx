@@ -331,31 +331,31 @@ const Clientes = () => {
     <div className="container mt-4 d-flex flex-column align-items-center" style={{ fontSize: "0.9rem" }}>
       <ToastContainer />
       <div className="w-100" style={{ maxWidth: "1200px" }}>
-        <h1 className="mb-3" style={{ color: "white" }}>Clientes</h1>
-        <InputGroup className="mb-3">
-          <Col className="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              {/* Botón corregido para abrir el modal de creación */}
-              <Button
-                variant="primary"
-                onClick={handleOpenCreateModal}
-                className="rounded-pill me-2"
-                style={{ backgroundColor: "#074de3", borderColor: "#074de3" }}
-              >
-                <FaPlus className="me-1" />
-                Crear Cliente
-              </Button>
+        <h1 className="mb-3 text-white">Lista de Clientes</h1>
+        <div className="mb-3">
+          <div className="row align-items-center">
+            <div className="col d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+              <div className="d-flex align-items-center">
+                <Button
+                  variant="primary"
+                  onClick={handleOpenCreateModal}
+                  className="rounded-pill me-2"
+                  style={{ backgroundColor: "#074de3", borderColor: "#074de3" }}
+                >
+                  <FaPlus className="me-1" /> Crear Cliente
+                </Button>
+              </div>
+              <div className="d-flex align-items-center justify-content-end">
+                <Button variant="success" className="rounded-pill me-2" onClick={exportToCSV}>
+                  Exportar CSV
+                </Button>
+                <Button variant="success" className="rounded-pill" onClick={exportToExcel}>
+                  Exportar Excel
+                </Button>
+              </div>
             </div>
-            <div>
-              <Button variant="success" className="rounded-pill" onClick={exportToCSV}>
-                Exportar CSV
-              </Button>
-              <Button variant="success" className="rounded-pill ms-2" onClick={exportToExcel}>
-                Exportar Excel
-              </Button>
-            </div>
-          </Col>
-        </InputGroup>
+          </div>
+        </div>
 
         {isLoading ? (
           <div>Cargando clientes...</div>

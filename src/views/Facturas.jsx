@@ -451,32 +451,36 @@ if (!config) {
       <ToastContainer />
       <div className="w-100" style={{ maxWidth: "1200px" }}>
         <h1 className="mb-3 text-white">Boletas y Facturas</h1>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div>
-            <Button
-              variant="primary"
-              onClick={() => setShowModal(true)}
-              className="rounded-pill me-2"
-              style={{ backgroundColor: "#074de3", borderColor: "#074de3" }}
-            >
-              <FaPlus className="me-1" />Crear Factura
-            </Button>
-          </div>
-          <div>
-            <Button
-              variant="success"
-              onClick={exportToExcel}
-              className="rounded-pill me-2"
-            >
-              Exportar a Excel
-            </Button>
-            <Button
-              variant="success"
-              onClick={exportToCSV}
-              className="rounded-pill"
-            >
-              Exportar a CSV
-            </Button>
+        <div className="mb-3">
+          <div className="row align-items-center">
+            <div className="col d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+              <div className="d-flex align-items-center">
+                <Button
+                  variant="primary"
+                  onClick={() => setShowModal(true)}
+                  className="rounded-pill me-2"
+                  style={{ backgroundColor: "#074de3", borderColor: "#074de3" }}
+                >
+                  <FaPlus className="me-1" /> Crear Factura
+                </Button>
+              </div>
+              <div className="d-flex align-items-center justify-content-end">
+                <Button
+                  variant="success"
+                  onClick={exportToExcel}
+                  className="rounded-pill me-2"
+                >
+                  Exportar a Excel
+                </Button>
+                <Button
+                  variant="success"
+                  onClick={exportToCSV}
+                  className="rounded-pill"
+                >
+                  Exportar a CSV
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
         <div className="d-flex justify-content-end mb-2">

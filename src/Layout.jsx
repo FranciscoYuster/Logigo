@@ -34,13 +34,7 @@ const AppRoutes = () => {
         <div className="d-flex" style={{ minHeight: '100%', width: '100vw', marginTop: '-450px' }}>
           <SideNav />
           <div className="flex-grow-1" style={{
-            textAlign: 'left',
-            minHeight: '100%',
-            width: '100%',
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
             marginTop: '-90px',
           }}
           >

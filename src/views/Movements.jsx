@@ -219,29 +219,31 @@ const Movements = () => {
       <div className="w-100" style={{ maxWidth: "1200px" }}>
         <h1 className="mb-3 text-white">Historial de Movimientos</h1>
         {/* Filtro global */}
-        <div className="d-flex justify-content-between align-items-center mb-3">
-         <div>
-          <Button
-            variant="primary"
-            onClick={() => setShowModal(true)}
-            className="rounded-pill me-2"
-            style={{ backgroundColor: "#074de3", borderColor: "#074de3" }}
-          >
-            <FaPlus className="me-1" /> Crear movimiento
-          </Button>
-          </div>
-
-        {/* Botones de exportación */}
-          <div>
-            <Button variant="success" className="rounded-pill me-2" onClick={handleExportCSV}>
-              Exportar CSV
-            </Button>
-            <Button variant="success"  className="rounded-pill me-2" onClick={handleExportExcel}>
-              Exportar Excel
-            </Button>
-            <Button variant="success" className="rounded-pill me-2" onClick={handleExportPDF}>
-              Exportar PDF
-            </Button>
+        <div className="mb-3">
+          <div className="row align-items-center">
+            <div className="col d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+              <div className="d-flex align-items-center">
+                <Button
+                  variant="primary"
+                  onClick={() => setShowModal(true)}
+                  className="rounded-pill me-2"
+                  style={{ backgroundColor: "#074de3", borderColor: "#074de3" }}
+                >
+                  <FaPlus className="me-1" /> Crear movimiento
+                </Button>
+              </div>
+              <div className="d-flex align-items-center justify-content-end">
+                <Button variant="success" className="rounded-pill me-2" onClick={handleExportCSV}>
+                  Exportar CSV
+                </Button>
+                <Button variant="success" className="rounded-pill me-2" onClick={handleExportExcel}>
+                  Exportar Excel
+                </Button>
+                <Button variant="success" className="rounded-pill" onClick={handleExportPDF}>
+                  Exportar PDF
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
