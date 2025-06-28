@@ -85,14 +85,14 @@ const ConfigurationSettings = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <CircularProgress />
+      <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 300 }}>
+        <CircularProgress size={60} />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
+    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }} style={{ marginTop: '200px' }}>
       {user && (
         <Paper sx={{ p: 2, mb: 3, display: 'flex', alignItems: 'center' }}>
           <Avatar 
