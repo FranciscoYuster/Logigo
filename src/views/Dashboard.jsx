@@ -285,7 +285,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container sx={{ mt: 4 }} style={{marginTop: '200px'}}>
       <Typography variant="h2" gutterBottom sx={{ color: 'white' }}>
         Dashboard
       </Typography>
