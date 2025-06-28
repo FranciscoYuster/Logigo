@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { baseUrl } from '../config';
 
 const SessionTimer = () => {
   const getStoredExpiration = () => parseInt(sessionStorage.getItem('expires_in')) || Date.now();
@@ -11,7 +12,7 @@ const SessionTimer = () => {
   // Función para renovar token
   const renewToken = async () => {
     try {
-      const res = await fetch('/api/renew-token', {
+      const res = await fetch(`${baseUrl}/api/renew-token`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`

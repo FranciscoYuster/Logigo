@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { baseUrl } from '../config';
 import { Line } from 'react-chartjs-2';
 import {
   Container,
@@ -129,157 +129,159 @@ const Dashboard = () => {
     const token = sessionStorage.getItem('access_token');
     if (!token) return;
 
-    axios.get('/api/invoices', {
+    fetch(`${baseUrl}/api/invoices`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-    .then(response => {
-      const allInvoices = response.data;
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+        return response.json();
+      })
+      .then(allInvoices => {
+        // Últimas 3 facturas
+        const lastThree = allInvoices.slice(-3);
+        setLatestInvoices(lastThree);
 
-      // Últimas 3 facturas
-      const lastThree = allInvoices.slice(-3);
-      setLatestInvoices(lastThree);
+        // KPIs globales (todas las facturas)
+        const totalInvoices = allInvoices.length;
+        const moneyCollected = allInvoices
+          .filter(inv => inv.status === 'Pagada')
+          .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
+        const moneyPending = allInvoices
+          .filter(inv => inv.status === 'Pendiente')
+          .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
+        const uniqueCustomers = new Set(
+          allInvoices
+            .filter(inv => inv.customer && inv.customer.email)
+            .map(inv => inv.customer.email)
+        );
+        const totalCustomers = uniqueCustomers.size;
 
-      // KPIs globales (todas las facturas)
-      const totalInvoices = allInvoices.length;
-      const moneyCollected = allInvoices
-        .filter(inv => inv.status === 'Pagada')
-        .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
-      const moneyPending = allInvoices
-        .filter(inv => inv.status === 'Pendiente')
-        .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
-      const uniqueCustomers = new Set(
-        allInvoices
-          .filter(inv => inv.customer && inv.customer.email)
-          .map(inv => inv.customer.email)
-      );
-      const totalCustomers = uniqueCustomers.size;
+        setKpiData({
+          moneyCollected,
+          moneyPending,
+          totalInvoices,
+          totalCustomers,
+        });
 
-      setKpiData({
-        moneyCollected,
-        moneyPending,
-        totalInvoices,
-        totalCustomers,
-      });
+        // Agrupar facturas por mes para el gráfico
+        const monthlyDataCollected = {};
+        const monthlyDataPending = {};
 
-      // Agrupar facturas por mes para el gráfico
-      const monthlyDataCollected = {};
-      const monthlyDataPending = {};
-
-      allInvoices.forEach(invoice => {
-        const date = new Date(invoice.invoice_date);
-        // Obtén el mes en formato corto (por ejemplo, "ene", "feb", etc.)
-        const month = date.toLocaleString('default', { month: 'short' });
-        if (invoice.status === 'Pagada') {
-          monthlyDataCollected[month] = (monthlyDataCollected[month] || 0) + (invoice.total_final || 0);
-        } else if (invoice.status === 'Pendiente') {
-          monthlyDataPending[month] = (monthlyDataPending[month] || 0) + (invoice.total_final || 0);
-        }
-      });
-
-      const allMonthsSet = new Set([
-        ...Object.keys(monthlyDataCollected),
-        ...Object.keys(monthlyDataPending)
-      ]);
-      const monthsOrder = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-      const sortedLabels = [...allMonthsSet].sort(
-        (a, b) => monthsOrder.indexOf(a.toLowerCase()) - monthsOrder.indexOf(b.toLowerCase())
-      );
-
-      const collectedValues = sortedLabels.map(month => monthlyDataCollected[month] || 0);
-      const pendingValues = sortedLabels.map(month => monthlyDataPending[month] || 0);
-
-      setRevenueData({
-        labels: sortedLabels,
-        datasets: [
-          {
-            label: 'Dinero Recogido',
-            data: collectedValues,
-            fill: false,
-            borderColor: 'green',
-          },
-          {
-            label: 'Dinero Pendiente',
-            data: pendingValues,
-            fill: false,
-            borderColor: 'orange',
+        allInvoices.forEach(invoice => {
+          const date = new Date(invoice.invoice_date);
+          // Obtén el mes en formato corto (por ejemplo, "ene", "feb", etc.)
+          const month = date.toLocaleString('default', { month: 'short' });
+          if (invoice.status === 'Pagada') {
+            monthlyDataCollected[month] = (monthlyDataCollected[month] || 0) + (invoice.total_final || 0);
+          } else if (invoice.status === 'Pendiente') {
+            monthlyDataPending[month] = (monthlyDataPending[month] || 0) + (invoice.total_final || 0);
           }
-        ]
+        });
+
+        const allMonthsSet = new Set([
+          ...Object.keys(monthlyDataCollected),
+          ...Object.keys(monthlyDataPending)
+        ]);
+        const monthsOrder = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+        const sortedLabels = [...allMonthsSet].sort(
+          (a, b) => monthsOrder.indexOf(a.toLowerCase()) - monthsOrder.indexOf(b.toLowerCase())
+        );
+
+        const collectedValues = sortedLabels.map(month => monthlyDataCollected[month] || 0);
+        const pendingValues = sortedLabels.map(month => monthlyDataPending[month] || 0);
+
+        setRevenueData({
+          labels: sortedLabels,
+          datasets: [
+            {
+              label: 'Dinero Recogido',
+              data: collectedValues,
+              fill: false,
+              borderColor: 'green',
+            },
+            {
+              label: 'Dinero Pendiente',
+              data: pendingValues,
+              fill: false,
+              borderColor: 'orange',
+            }
+          ]
+        });
+
+        // Cálculo de KPIs para mes actual y mes anterior
+        const now = new Date();
+        const currentMonth = now.getMonth(); // 0-11
+        const currentYear = now.getFullYear();
+        const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+        const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+        const currentInvoices = allInvoices.filter(invoice => {
+          const d = new Date(invoice.invoice_date);
+          return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+        });
+        const previousInvoices = allInvoices.filter(invoice => {
+          const d = new Date(invoice.invoice_date);
+          return d.getMonth() === previousMonth && d.getFullYear() === previousYear;
+        });
+
+        // Dinero Recogido
+        const currentCollected = currentInvoices
+          .filter(inv => inv.status === 'Pagada')
+          .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
+        const previousCollected = previousInvoices
+          .filter(inv => inv.status === 'Pagada')
+          .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
+
+        // Dinero Pendiente
+        const currentPending = currentInvoices
+          .filter(inv => inv.status === 'Pendiente')
+          .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
+        const previousPending = previousInvoices
+          .filter(inv => inv.status === 'Pendiente')
+          .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
+
+        // Total Facturas
+        const currentTotalInvoices = currentInvoices.length;
+        const previousTotalInvoices = previousInvoices.length;
+
+        // Total Clientes (únicos por email)
+        const currentCustomers = new Set(
+          currentInvoices
+            .filter(inv => inv.customer && inv.customer.email)
+            .map(inv => inv.customer.email)
+        ).size;
+        const previousCustomers = new Set(
+          previousInvoices
+            .filter(inv => inv.customer && inv.customer.email)
+            .map(inv => inv.customer.email)
+        ).size;
+
+        setComparativeKpi({
+          collected: {
+            current: currentCollected,
+            previous: previousCollected,
+            percentage: calculatePercentage(currentCollected, previousCollected),
+          },
+          pending: {
+            current: currentPending,
+            previous: previousPending,
+            percentage: calculatePercentage(currentPending, previousPending),
+          },
+          totalInvoices: {
+            current: currentTotalInvoices,
+            previous: previousTotalInvoices,
+            percentage: calculatePercentage(currentTotalInvoices, previousTotalInvoices),
+          },
+          totalCustomers: {
+            current: currentCustomers,
+            previous: previousCustomers,
+            percentage: calculatePercentage(currentCustomers, previousCustomers),
+          }
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching invoices:', error);
       });
-
-      // Cálculo de KPIs para mes actual y mes anterior
-      const now = new Date();
-      const currentMonth = now.getMonth(); // 0-11
-      const currentYear = now.getFullYear();
-      const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-      const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-
-      const currentInvoices = allInvoices.filter(invoice => {
-        const d = new Date(invoice.invoice_date);
-        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-      });
-      const previousInvoices = allInvoices.filter(invoice => {
-        const d = new Date(invoice.invoice_date);
-        return d.getMonth() === previousMonth && d.getFullYear() === previousYear;
-      });
-
-      // Dinero Recogido
-      const currentCollected = currentInvoices
-        .filter(inv => inv.status === 'Pagada')
-        .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
-      const previousCollected = previousInvoices
-        .filter(inv => inv.status === 'Pagada')
-        .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
-
-      // Dinero Pendiente
-      const currentPending = currentInvoices
-        .filter(inv => inv.status === 'Pendiente')
-        .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
-      const previousPending = previousInvoices
-        .filter(inv => inv.status === 'Pendiente')
-        .reduce((acc, inv) => acc + (inv.total_final || 0), 0);
-
-      // Total Facturas
-      const currentTotalInvoices = currentInvoices.length;
-      const previousTotalInvoices = previousInvoices.length;
-
-      // Total Clientes (únicos por email)
-      const currentCustomers = new Set(
-        currentInvoices
-          .filter(inv => inv.customer && inv.customer.email)
-          .map(inv => inv.customer.email)
-      ).size;
-      const previousCustomers = new Set(
-        previousInvoices
-          .filter(inv => inv.customer && inv.customer.email)
-          .map(inv => inv.customer.email)
-      ).size;
-
-      setComparativeKpi({
-        collected: {
-          current: currentCollected,
-          previous: previousCollected,
-          percentage: calculatePercentage(currentCollected, previousCollected),
-        },
-        pending: {
-          current: currentPending,
-          previous: previousPending,
-          percentage: calculatePercentage(currentPending, previousPending),
-        },
-        totalInvoices: {
-          current: currentTotalInvoices,
-          previous: previousTotalInvoices,
-          percentage: calculatePercentage(currentTotalInvoices, previousTotalInvoices),
-        },
-        totalCustomers: {
-          current: currentCustomers,
-          previous: previousCustomers,
-          percentage: calculatePercentage(currentCustomers, previousCustomers),
-        }
-      });
-    })
-    .catch(error => {
-      console.error('Error fetching invoices:', error);
-    });
   }, []);
 
   return (

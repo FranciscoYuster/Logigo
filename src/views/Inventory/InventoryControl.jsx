@@ -246,11 +246,11 @@ const InventoryControl = () => {
   };
 
   return (
-    <Container fluid className="mt-4">
+    <Container fluid style={{ minHeight: '100%', marginLeft: '250px' }}>
       <ToastContainer />
       {!selectedUbicacion ? (
         <>
-          <h2>Seleccione una Bodega</h2>
+          <h2 className="text-white">Seleccione una Bodega</h2>
           {renderUbicacionesCards()}
         </>
       ) : (

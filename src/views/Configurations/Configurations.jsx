@@ -1,7 +1,8 @@
-// src/views/ConfigurationSettings.jsx
+
 import React, { useState, useEffect } from 'react';
 import { Box, Paper, Typography, TextField, Button, CircularProgress, Alert, Avatar } from '@mui/material';
 import { toast } from 'react-toastify';
+import { baseUrl } from '../../config';
 
 const ConfigurationSettings = () => {
   const [configuration, setConfiguration] = useState(null);
@@ -16,7 +17,7 @@ const ConfigurationSettings = () => {
     const fetchConfiguration = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/configuraciones', {
+        const response = await fetch(`${baseUrl}/api/configuraciones`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ const ConfigurationSettings = () => {
 
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch('/api/profile', {
+        const response = await fetch(`${baseUrl}/api/profile`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ const ConfigurationSettings = () => {
     if (!configuration) return;
     setUpdating(true);
     try {
-      const response = await fetch(`/api/configuraciones/${configuration.id}`, {
+      const response = await fetch(`${baseUrl}/api/configuraciones/${configuration.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -116,37 +117,43 @@ const ConfigurationSettings = () => {
           </Box>
         </Paper>
       )}
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h5" gutterBottom>
+      <Paper sx={{ p: 5, boxShadow: 6, mb: 4 }}>
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
           Configuración Predeterminada
         </Typography>
         {configuration ? (
           <form onSubmit={handleUpdate}>
-            <Box mb={2}>
+            <Box mb={3}>
               <TextField
                 label="Impuesto"
                 value="19%"
                 fullWidth
                 disabled
                 helperText="Este valor se fija automáticamente (19%)"
+                InputProps={{ style: { fontSize: 22, fontWeight: 500 } }}
+                InputLabelProps={{ style: { fontSize: 18 } }}
               />
             </Box>
-            <Box mb={2}>
+            <Box mb={3}>
               <TextField
                 label="Moneda"
                 value={configuration.moneda}
                 fullWidth
                 disabled
                 helperText="La moneda se fija automáticamente (CLP)"
+                InputProps={{ style: { fontSize: 22, fontWeight: 500 } }}
+                InputLabelProps={{ style: { fontSize: 18 } }}
               />
             </Box>
-            <Box mb={2}>
+            <Box mb={3}>
               <TextField
                 label="Formato de Facturación"
                 value={formatoFacturacion}
                 onChange={(e) => setFormatoFacturacion(e.target.value)}
                 disabled
                 fullWidth
+                InputProps={{ style: { fontSize: 22, fontWeight: 500 } }}
+                InputLabelProps={{ style: { fontSize: 18 } }}
               />
             </Box>
           </form>

@@ -72,7 +72,7 @@ const Register = () => {
     if (user) return <Navigate to="/profile" replace />;
 
     return (
-        <div className="view-container">
+        <div className="view-container" style={{ minHeight: '100vh', padding: '90px' }}>
             <div className="login-container">
                 <div className="login-box">
                     <div className='mx-auto'>

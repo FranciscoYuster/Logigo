@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { baseUrl } from "../config";
 import {
   Button,
   Modal,
@@ -44,7 +45,7 @@ const Movements = () => {
   const fetchMovements = async () => {
     setLoadingMovements(true);
     try {
-      const response = await fetch("/api/movements", {
+      const response = await fetch(`${baseUrl}/api/movements`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +67,7 @@ const Movements = () => {
   const fetchProducts = async () => {
     setLoadingProducts(true);
     try {
-      const response = await fetch("/api/products", {
+      const response = await fetch(`${baseUrl}/api/products`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -129,7 +130,7 @@ const Movements = () => {
       return;
     }
     try {
-      const response = await fetch("/api/movements", {
+      const response = await fetch(`${baseUrl}/api/movements`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

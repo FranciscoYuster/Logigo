@@ -31,12 +31,18 @@ const AppRoutes = () => {
   return (
     <>
       {user ? (
-        <div className="d-flex" style={{ minHeight: '100%', width: '100%' }}>
+        <div className="d-flex" style={{ minHeight: '100%', width: '100vw', paddingLeft: '150px', marginTop: '-450px' }}>
           <SideNav />
           <div className="flex-grow-1" style={{
             marginLeft: '205px',
-            padding: '30px',
-            textAlign: 'left'
+            textAlign: 'left',
+            minHeight: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            marginTop: '-90px',
           }}
           >
             <Routes>

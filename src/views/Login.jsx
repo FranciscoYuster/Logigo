@@ -6,24 +6,29 @@ import "./Login.css";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { GoogleLogin } from '@react-oauth/google';
 import { baseUrl } from '../config';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const navigate = useNavigate();
   const { user, login, loginWithGoogle, checkAuth } = useAuth();
 
-  const [error, setError] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   // Login tradicional con email/password
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-
-    const data = await login({ email, password });
-    if (data.error) {
-      setError("User not found");
-    } else {
+    try {
+      const data = await login({ email, password });
+      if (data.error) {
+        toast.error("Usuario no encontrado", {
+          position: 'top-center',
+          autoClose: 3500,
+          theme: 'colored',
+        });
+        return;
+      }
       sessionStorage.setItem('access_token', data.access_token);
       const authData = await checkAuth();
       if (authData.error) {
@@ -31,24 +36,19 @@ const Login = () => {
       } else {
         navigate('/profile');
       }
+    } catch (err) {
+      toast.error("Error de conexión", {
+        position: 'top-center',
+        autoClose: 3500,
+        theme: 'colored',
+      });
     }
   };
 
   if (user) return <Navigate to="/profile" replace />;
 
   return (
-    <div className='w-100 mx-auto my-5'>
-      {error && (
-        <div className="alert alert-danger alert-dismissible fade show" role="alert">
-          <strong>Error!</strong> {error}.
-          <button
-            type="button"
-            className="btn-close"
-            onClick={() => setError(null)}
-            aria-label="Close">
-          </button>
-        </div>
-      )}
+    <div className='w-100 mx-auto' style={{ minHeight: '100vh', padding: '90px' }}>
       <div className="view-container">
         <div className="login-box">
           <h2 className="text-center">Login</h2>
@@ -58,7 +58,7 @@ const Login = () => {
               <input
                 type="email"
                 id="email"
-                className="form-control"
+                className={`form-control`}
                 placeholder='Email'
                 onChange={e => setEmail(e.target.value)}
               />
@@ -68,7 +68,7 @@ const Login = () => {
               <input
                 type="password"
                 id="password"
-                className="form-control"
+                className={`form-control`}
                 placeholder='Password'
                 onChange={e => setPassword(e.target.value)}
               />
@@ -81,7 +81,7 @@ const Login = () => {
             <button className="btn btn-primary mb-3 w-100" type="submit">
               Login
             </button>
-            <GoogleLogin 
+          {/*   <GoogleLogin 
               onSuccess={(response) => {
                 fetch(`${baseUrl}/api/verificar-token`, {
                   method: 'POST',
@@ -105,7 +105,7 @@ const Login = () => {
               onError={() => {
                 console.log("Error de Authentication");
               }}
-            />
+            /> */}
           </form>
           <p className="text-center mt-3">
             Don't have an account?{' '}
@@ -115,6 +115,7 @@ const Login = () => {
           </p>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

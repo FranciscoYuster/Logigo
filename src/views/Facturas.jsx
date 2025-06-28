@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "react-multi-date-picker/styles/colors/teal.css";
 import { FaCheck, FaClock, FaBan, FaPlus, FaEye, FaEyeSlash } from "react-icons/fa";
 import * as XLSX from "xlsx"; // Asegúrate de tener instalada la librería
+import { baseUrl } from "../config";
 
 const Facturas = () => {
   const [invoices, setInvoices] = useState([]);
@@ -59,7 +60,7 @@ const Facturas = () => {
   // Cargar configuración
   const fetchConfig = () => {
     setLoadingConfig(true);
-    fetch("/api/configuraciones", {
+    fetch(`${baseUrl}/api/configuraciones`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -81,7 +82,7 @@ const Facturas = () => {
   // Cargar facturas
   const fetchInvoices = () => {
     setLoadingInvoices(true);
-    fetch("/api/invoices", {
+    fetch(`${baseUrl}/api/invoices`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -103,7 +104,7 @@ const Facturas = () => {
   // Cargar clientes
   const fetchCustomers = () => {
     setLoadingCustomers(true);
-    fetch("/api/customers", {
+    fetch(`${baseUrl}/api/customers`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -139,7 +140,18 @@ const Facturas = () => {
     fetchCustomers();
   }, []);
 
-  if (!config) return <p>Cargando configuración...</p>;
+if (!config) {
+  return (
+    <div className="container mt-4 d-flex flex-column align-items-center" style={{ fontSize: "0.9rem" }}>
+      <div className="w-100" style={{ maxWidth: "1200px" }}>
+        <h1 className="mb-3 text-white">Boletas y Facturas</h1>
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: 200 }}>
+          <span className="text-white fs-4">Cargando...</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
   // Formatear fecha a "YYYY-MM-DD"
   const formatDate = (dateStr) => {
@@ -262,7 +274,7 @@ const Facturas = () => {
       invoiceData.customer_name = newInvoice.customer_name;
       invoiceData.customer_email = newInvoice.customer_email;
     }
-    fetch("/api/invoices", {
+    fetch(`${baseUrl}/api/invoices`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -293,7 +305,7 @@ const Facturas = () => {
       toast.error("No se puede cambiar el estado de una factura pagada.");
       return;
     }
-    fetch(`/api/invoices/${invoiceId}`, {
+    fetch(`${baseUrl}/api/invoices/${invoiceId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -347,7 +359,7 @@ const Facturas = () => {
   const handleConfirmAnular = () => {
     if (!invoiceToAnular) return;
     const motive = anularMotive === "Otro" ? anularOtherMotive : anularMotive;
-    fetch(`/api/invoices/${invoiceToAnular.id}`, {
+    fetch(`${baseUrl}/api/invoices/${invoiceToAnular.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

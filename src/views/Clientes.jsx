@@ -5,6 +5,7 @@ import { FaPlus } from "react-icons/fa";
 import * as XLSX from "xlsx";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { baseUrl } from "../config";
 
 const Clientes = () => {
   const [customers, setCustomers] = useState([]);
@@ -44,7 +45,7 @@ const Clientes = () => {
   const fetchCustomers = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/customers", {
+      const response = await fetch(`${baseUrl}/api/invoices`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +117,7 @@ const Clientes = () => {
       return;
     }
     try {
-      const response = await fetch(`/api/customers/${customerToDelete}`, {
+      const response = await fetch(`${baseUrl}/api/customers/${customerToDelete}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` },
       });
@@ -155,7 +156,7 @@ const Clientes = () => {
     try {
       await Promise.all(
         selectedCustomers.map(async (id) => {
-          const response = await fetch(`/api/customers/${id}`, {
+          const response = await fetch(`${baseUrl}/api/customers/${id}`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${token}` },
           });
@@ -221,7 +222,7 @@ const Clientes = () => {
       return;
     }
     try {
-      const response = await fetch("/api/customers", {
+      const response = await fetch(`${baseUrl}/api/customers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -271,7 +272,7 @@ const Clientes = () => {
   const handleSubmitEditCustomer = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/customers/${editCustomer.id}`, {
+      const response = await fetch(`${baseUrl}/api/customers/${editCustomer.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

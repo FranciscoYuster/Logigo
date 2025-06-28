@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { baseUrl } from "../config";
 import {
   Button,
   Modal,
@@ -56,7 +57,7 @@ const Productos = () => {
 
   // Carga de productos
   const fetchProducts = () => {
-    fetch("/api/products", {
+    fetch(`${baseUrl}/api/products`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +77,7 @@ const Productos = () => {
 
   // Carga de categorías
   const fetchCategories = () => {
-    fetch("/api/categories", {
+    fetch(`${baseUrl}/api/categories`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +97,7 @@ const Productos = () => {
 
   // Carga de ubicaciones
   const fetchLocations = () => {
-    fetch("/api/ubicaciones", {
+    fetch(`${baseUrl}/api/ubicaciones`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -172,7 +173,7 @@ const Productos = () => {
       toast.error("Stock o precio no son números válidos.");
       return;
     }
-    fetch("/api/products", {
+    fetch(`${baseUrl}/api/products`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -196,7 +197,7 @@ const Productos = () => {
         setProductos([...productos, productoCreado]);
         toast.success("Producto creado exitosamente.");
         // Registrar movimiento de ingreso
-        fetch("/api/movements", {
+        fetch(`${baseUrl}/api/movements`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -229,7 +230,7 @@ const Productos = () => {
 
   const handleUpdateProduct = async (id, updatedProductData) => {
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`${baseUrl}/api/products/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -250,7 +251,7 @@ const Productos = () => {
   };
 
   const handleDeleteProduct = (id) => {
-    fetch(`/api/products/${id}`, {
+    fetch(`${baseUrl}/api/products/${id}`, {
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -298,7 +299,7 @@ const Productos = () => {
     }
     if (deletableIds.length === 0) return;
     const deleteRequests = deletableIds.map((id) =>
-      fetch(`/api/products/${id}`, {
+      fetch(`${baseUrl}/api/products/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -331,7 +332,7 @@ const Productos = () => {
       toast.error("Ingrese el nombre de la categoría");
       return;
     }
-    fetch("/api/categories", {
+    fetch(`${baseUrl}/api/categories`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
